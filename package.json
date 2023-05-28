@@ -1,0 +1,31 @@
+{
+  "name": "filamagenta-backend",
+  "version": "0.0.1-dev01",
+  "description": "The backend server for all the Fila Magenta products.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FilaMagenta/Backend.git"
+  },
+  "keywords": [
+    "fila",
+    "magenta",
+    "alcoi",
+    "backend",
+    "api",
+    "festes",
+    "moros",
+    "cristians",
+    "rest",
+    "nodejs"
+  ],
+  "author": "Arnau Mora",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/FilaMagenta/Backend/issues"
+  },
+  "homepage": "https://github.com/FilaMagenta/Backend#readme"
+}
