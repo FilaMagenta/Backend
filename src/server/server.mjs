@@ -3,7 +3,10 @@ import express from 'express';
 
 import loginEndpoint from './endpoints/login.mjs';
 import registerEndpoint from './endpoints/register.mjs';
-import {getAccountEndpoint} from './endpoints/account.mjs';
+import {getAccountEndpoint, setAccountMetaEndpoint} from './endpoints/account.mjs';
+import {MetaTypes} from '../woo/data.mjs';
+import {sendError} from "./utils.mjs";
+import {UNKNOWN_ENDPOINT} from "../errors.mjs";
 
 /**
  * Starts the webserver on the given port.
@@ -19,8 +22,10 @@ export function start(port = 3000) {
 
     app.get('/v1/account', getAccountEndpoint);
 
+    app.post('/v1/account/meta/birthday', setAccountMetaEndpoint(MetaTypes.BIRTHDAY));
+
     app.get('*', (req, res) => {
-        res.send('Hello world!');
+        sendError(res, UNKNOWN_ENDPOINT, 404);
     });
 
     app.listen(port, () => {

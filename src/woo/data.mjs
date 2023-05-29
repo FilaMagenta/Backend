@@ -1,5 +1,16 @@
 import api from "./api.mjs";
 
+/**
+ * @typedef {'administrator','editor','author','contributor','subscriber','customer','shop_manager'} UserRole
+ */
+
+/**
+ * @typedef {Object} MetaData
+ * @property {number} id
+ * @property {string} key
+ * @property {string} value
+ */
+
 /** @typedef {object} UserData
  * @property {number} id
  * @property {string} date_created
@@ -9,7 +20,7 @@ import api from "./api.mjs";
  * @property {string} email
  * @property {string} first_name
  * @property {string} last_name
- * @property {string} role
+ * @property {UserRole} role
  * @property {string} username
  * @property {object} billing
  * @property {string} billing.first_name
@@ -35,10 +46,7 @@ import api from "./api.mjs";
  * @property {string} shipping.country
  * @property {boolean} is_paying_customer
  * @property {string} avatar_url
- * @property {object[]} meta_data
- * @property {number} meta_data.id
- * @property {string} meta_data.key
- * @property {string} meta_data.value
+ * @property {MetaData[]} meta_data
  * @property {object} _links
  * @property {object[]} _links.self
  * @property {string} _links.self.href
@@ -54,4 +62,61 @@ import api from "./api.mjs";
 export async function getUserData(userId) {
     const user = await api.get(`customers/${userId}`);
     return user.data;
+}
+
+/**
+ * Checks whether a user is administrator.
+ * @param {UserData|number} data If `UserData` is passed, it's checked from it. Otherwise, a user id is required, which
+ * is used for fetching that user's data.
+ * @return {?boolean} May return null of invalid data is passed.
+ */
+export async function isAdmin(data) {
+    if (data.hasOwnProperty('role'))
+        return data.role === 'administrator';
+    if (typeof data === 'number')
+        return (await getUserData(data)).role === 'administrator';
+    return null;
+}
+
+class MetaType {
+    /**
+     * @param {number} id
+     * @param {string} key
+     */
+    constructor(id, key) {
+        this.key = key;
+    }
+
+    /** @type {number} */ id;
+    /** @type {string} */ key;
+}
+
+export const MetaTypes = {
+    BIRTHDAY: new MetaType(1000, 'birthday')
+}
+
+/**
+ * Updates the metadata for the given user.
+ * @param {number} userId
+ * @param {MetaData[]} meta
+ * @return {Promise<void>}
+ */
+export async function setUserMeta(userId, meta) {
+    await api.post(`customers/${userId}`, {meta_data: meta})
+}
+
+/**
+ * Updates the metadata value of the given MetaType for the desired user.
+ * @param {number} userId
+ * @param {MetaType} meta
+ * @param {string} value
+ * @return {Promise<void>}
+ */
+export async function updateUserMeta(userId, meta, value) {
+    const user = await getUserData(userId);
+    const metadata = user.meta_data;
+    const metaIndex = metadata.findIndex((entry) => { return entry.key === meta.key });
+    metadata[metaIndex] = { id: meta.id, key: meta.key, value };
+
+    await setUserMeta(userId, metadata);
 }

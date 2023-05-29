@@ -15,26 +15,55 @@ export class Error {
     message;
 }
 
+export const MISSING_DNI = new Error(1, 'The request is missing the required `dni` parameter in the body.');
+export const MISSING_PASSWORD = new Error(2, 'The request is missing the required `password` parameter in the body.');
+export const MISSING_EMAIL = new Error(3, 'The request is missing the required `email` parameter in the body.');
+export const MISSING_NAME = new Error(4, 'The request is missing the required `name` parameter in the body.');
+export const MISSING_SURNAME = new Error(5, 'The request is missing the required `surname` parameter in the body.');
+export const MISSING_VALUE = new Error(5, 'The request is missing the required `value` parameter in the body.');
+
+export const INVALID_DNI = new Error(20, 'The DNI passed is not valid.');
+
+export const USER_ALREADY_EXISTS = new Error(30, 'An user with the given DNI already exists.');
+export const EMAIL_ALREADY_EXISTS = new Error(31, 'An user with the given email already exists.');
+
+export const USER_NOT_FOUND = new Error(40, 'Could not find any user with the given DNI');
+
+export const AUTH_MISSING_HEADER = new Error(50, 'The request is missing an authentication header.');
+export const AUTH_INVALID_METHOD = new Error(51, 'Using a non-supported authentication method.');
+export const AUTH_TOKEN_EXPIRED = new Error(52, 'The token you are using has expired.');
+export const AUTH_TOKEN_INVALID = new Error(53, 'The token you are using is not valid.');
+
+export const UNKNOWN_REGISTER = new Error(1000, 'An unknown error occurred while trying to register.');
+export const UNKNOWN_LOGIN = new Error(1001, 'An unknown error occurred while trying to login.');
+export const UNKNOWN_ACCOUNT = new Error(1002, 'An unknown error occurred while trying to get your account\'s data. Token might be invalid');
+
+export const UNKNOWN_ENDPOINT = new Error(9999, 'Unknown endpoint');
+
+
 export default {
-    MISSING_DNI: new Error(1, 'The request is missing the required `dni` parameter in the body.'),
-    MISSING_PASSWORD: new Error(2, 'The request is missing the required `password` parameter in the body.'),
-    MISSING_EMAIL: new Error(3, 'The request is missing the required `email` parameter in the body.'),
-    MISSING_NAME: new Error(4, 'The request is missing the required `name` parameter in the body.'),
-    MISSING_SURNAME: new Error(5, 'The request is missing the required `surname` parameter in the body.'),
+    MISSING_DNI,
+    MISSING_PASSWORD,
+    MISSING_EMAIL,
+    MISSING_NAME,
+    MISSING_SURNAME,
+    MISSING_VALUE,
 
-    INVALID_DNI: new Error(20, 'The DNI passed is not valid.'),
+    INVALID_DNI,
 
-    USER_ALREADY_EXISTS: new Error(30, 'An user with the given DNI already exists.'),
-    EMAIL_ALREADY_EXISTS: new Error(31, 'An user with the given email already exists.'),
+    USER_ALREADY_EXISTS,
+    EMAIL_ALREADY_EXISTS,
 
-    USER_NOT_FOUND: new Error(40, 'Could not find any user with the given DNI'),
+    USER_NOT_FOUND,
 
-    AUTH_MISSING_HEADER: new Error(50, 'The request is missing an authentication header.'),
-    AUTH_INVALID_METHOD: new Error(51, 'Using a non-supported authentication method.'),
-    AUTH_TOKEN_EXPIRED: new Error(52, 'The token you are using has expired.'),
-    AUTH_TOKEN_INVALID: new Error(53, 'The token you are using is not valid.'),
+    AUTH_MISSING_HEADER,
+    AUTH_INVALID_METHOD,
+    AUTH_TOKEN_EXPIRED,
+    AUTH_TOKEN_INVALID,
 
-    UNKNOWN_REGISTER: new Error(1000, 'An unknown error occurred while trying to register.'),
-    UNKNOWN_LOGIN: new Error(1001, 'An unknown error occurred while trying to login.'),
-    UNKNOWN_ACCOUNT: new Error(1002, 'An unknown error occurred while trying to get your account\'s data. Token might be invalid'),
+    UNKNOWN_REGISTER,
+    UNKNOWN_LOGIN,
+    UNKNOWN_ACCOUNT,
+
+    UNKNOWN_ENDPOINT
 }
