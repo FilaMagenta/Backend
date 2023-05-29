@@ -1,7 +1,10 @@
 import errors from '../../errors.mjs';
-import {sendError} from "../utils.mjs";
+import {sendError, sendSuccess} from "../utils.mjs";
 import dniValidator from '../../validation/dni.mjs';
+import {sign} from '../../validation/tokens.mjs';
 import authentication from "../../woo/authentication.js";
+
+const {login, LoginError} = authentication;
 
 /**
  * Provides the logic of the login endpoint.
@@ -23,7 +26,14 @@ export default async function (req, res) {
     if (!dniValidator.validate(dni))
         return sendError(res, errors.INVALID_DNI)
 
-    await authentication.login(dni, password)
+    const result = await login(dni, password);
+    if (result === LoginError.OK) {
+        // Generate a new token for the user
+        const result = await sign({dni});
 
-    res.json({success: true});
+        return sendSuccess(res, {token: result});
+    }
+    if (result === LoginError.USER_NOT_FOUND) return sendError(res, errors.USER_NOT_FOUND);
+
+    return sendError(res, errors.UNKNOWN_REGISTER, 500, result);
 }

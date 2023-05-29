@@ -27,5 +27,8 @@ export default {
     USER_ALREADY_EXISTS: new Error(30, 'An user with the given DNI already exists.'),
     EMAIL_ALREADY_EXISTS: new Error(31, 'An user with the given email already exists.'),
 
+    USER_NOT_FOUND: new Error(40, 'Could not find any user with the given DNI'),
+
     UNKNOWN_REGISTER: new Error(1000, 'An unknown error occurred while trying to register.'),
+    UNKNOWN_LOGIN: new Error(1001, 'An unknown error occurred while trying to login.'),
 }
