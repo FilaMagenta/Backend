@@ -29,6 +29,12 @@ export default {
 
     USER_NOT_FOUND: new Error(40, 'Could not find any user with the given DNI'),
 
+    AUTH_MISSING_HEADER: new Error(50, 'The request is missing an authentication header.'),
+    AUTH_INVALID_METHOD: new Error(51, 'Using a non-supported authentication method.'),
+    AUTH_TOKEN_EXPIRED: new Error(52, 'The token you are using has expired.'),
+    AUTH_TOKEN_INVALID: new Error(53, 'The token you are using is not valid.'),
+
     UNKNOWN_REGISTER: new Error(1000, 'An unknown error occurred while trying to register.'),
     UNKNOWN_LOGIN: new Error(1001, 'An unknown error occurred while trying to login.'),
+    UNKNOWN_ACCOUNT: new Error(1002, 'An unknown error occurred while trying to get your account\'s data. Token might be invalid'),
 }

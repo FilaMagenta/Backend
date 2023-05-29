@@ -1,0 +1,2 @@
+### Get user's data
+GET http://localhost:3000/v1/account

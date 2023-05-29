@@ -11,6 +11,11 @@ async function readPrivateKey() {
     return await fs.readFile(privateKeyFile);
 }
 
+async function readPublicKey() {
+    const privateKeyFile = path.join(getRootFromNodeModules(), 'keys', 'public.key');
+    return await fs.readFile(privateKeyFile);
+}
+
 /**
  * Signs some data using jsonwebtoken. Expires in 15 days by default.
  * @param {Object} data The data to sign
@@ -22,4 +27,20 @@ export async function sign(data, expiresIn = TOKEN_EXPIRATION_DAYS) {
         exp: Math.floor(Date.now() / 1000) + (60 * 60 * 24 * expiresIn),
         data
     }, await readPrivateKey(), { algorithm: 'RS256' });
+}
+
+/**
+ * @typedef {Object} VerifyResult
+ * @property {number} exp
+ * @property {number} iat
+ * @property {Object} data
+ */
+
+/**
+ * Verifies that a token is valid.
+ * @param {string} token The token to verify.
+ * @return {Promise<VerifyResult>} The decoded data for token.
+ */
+export async function verify(token) {
+    return jwt.verify(token, await readPublicKey(), { algorithm: 'RS256' })
 }

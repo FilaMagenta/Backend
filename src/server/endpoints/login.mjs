@@ -26,14 +26,14 @@ export default async function (req, res) {
     if (!dniValidator.validate(dni))
         return sendError(res, errors.INVALID_DNI)
 
-    const result = await login(dni, password);
-    if (result === LoginError.OK) {
+    const {code, data} = await login(dni, password);
+    if (code === 0) {
         // Generate a new token for the user
-        const result = await sign({dni});
+        const result = await sign({dni, id: data.id});
 
         return sendSuccess(res, {token: result});
     }
-    if (result === LoginError.USER_NOT_FOUND) return sendError(res, errors.USER_NOT_FOUND);
+    if (code === 1) return sendError(res, errors.USER_NOT_FOUND);
 
-    return sendError(res, errors.UNKNOWN_REGISTER, 500, result);
+    return sendError(res, errors.UNKNOWN_REGISTER, 500, {error: data});
 }
