@@ -1,9 +1,21 @@
-
 import UserNotFoundError from "../errors/UserNotFoundError.js";
-
 import api from './api.mjs';
 
+/**
+ * @typedef {Object} AuthenticationError
+ * @property {string} code
+ * @property {string} message
+ * @property {Object} data
+ */
+
+const RegistrationError = {
+    OK: 0,
+    ALREADY_EXISTS: 1,
+    UNKNOWN: 255
+};
+
 export default {
+    RegistrationError,
     /**
      * Tries to log in with the given credentials.
      * @param {string} dni The DNI of the user.
@@ -20,5 +32,31 @@ export default {
         console.log('Users: ', data.map((el) => el['username']));
         const user = data[0];
         console.info("user", user)
+    },
+    /**
+     * Tries to register a new user in the database.
+     * @param {string} dni
+     * @param {string} password
+     * @param {string} email
+     * @param {string} name
+     * @param {string} surname
+     * @returns {Promise<RegistrationError>}
+     */
+    register: async (dni, password, email, name, surname) => {
+        try {
+            await api.post(
+                'customers',
+                {username: dni, email, first_name: name, last_name: surname, password}
+            )
+            return RegistrationError.OK;
+        } catch (e) {
+            /** @type {AuthenticationError} */ const data = e.response.data;
+            switch (data.code) {
+                case 'registration-error-username-exists':
+                    return RegistrationError.ALREADY_EXISTS;
+                default:
+                    return RegistrationError.UNKNOWN
+            }
+        }
     }
 }
