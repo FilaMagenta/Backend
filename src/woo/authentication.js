@@ -10,8 +10,9 @@ import api from './api.mjs';
 
 const RegistrationError = {
     OK: 0,
-    ALREADY_EXISTS: 1,
-    UNKNOWN: 255
+    USERNAME_ALREADY_EXISTS: 1,
+    EMAIL_ALREADY_EXISTS: 2,
+    UNKNOWN: (err) => { return {code: 255, err} }
 };
 
 export default {
@@ -40,7 +41,7 @@ export default {
      * @param {string} email
      * @param {string} name
      * @param {string} surname
-     * @returns {Promise<RegistrationError>}
+     * @returns {Promise<RegistrationError|{code:number,err}>}
      */
     register: async (dni, password, email, name, surname) => {
         try {
@@ -53,9 +54,11 @@ export default {
             /** @type {AuthenticationError} */ const data = e.response.data;
             switch (data.code) {
                 case 'registration-error-username-exists':
-                    return RegistrationError.ALREADY_EXISTS;
+                    return RegistrationError.USERNAME_ALREADY_EXISTS;
+                case 'registration-error-email-exists':
+                    return RegistrationError.EMAIL_ALREADY_EXISTS;
                 default:
-                    return RegistrationError.UNKNOWN
+                    return RegistrationError.UNKNOWN(data)
             }
         }
     }

@@ -25,6 +25,7 @@ export default {
     INVALID_DNI: new Error(20, 'The DNI passed is not valid.'),
 
     USER_ALREADY_EXISTS: new Error(30, 'An user with the given DNI already exists.'),
+    EMAIL_ALREADY_EXISTS: new Error(31, 'An user with the given email already exists.'),
 
     UNKNOWN_REGISTER: new Error(1000, 'An unknown error occurred while trying to register.'),
 }
