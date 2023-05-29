@@ -1,0 +1,11 @@
+### Register as sample user
+POST http://localhost:3000/v1/auth/register
+Content-Type: application/json
+
+{
+  "dni":"12345678Z",
+  "name":"Example",
+  "surname":"User",
+  "email":"example@mail.com",
+  "password":"password"
+}
