@@ -1,11 +1,12 @@
 
 import express from 'express';
+import cors from 'cors';
 
 import loginEndpoint from './endpoints/login.mjs';
 import registerEndpoint from './endpoints/register.mjs';
 import {getAccountEndpoint, setAccountMetaEndpoint, getAccountMetaEndpoint} from './endpoints/account.mjs';
 import {MetaTypes} from '../woo/data.mjs';
-import {sendError} from "./utils.mjs";
+import {sendError, sendSuccess} from "./utils.mjs";
 import {UNKNOWN_ENDPOINT} from "../errors.mjs";
 
 /**
@@ -16,6 +17,10 @@ export function start(port = 3000) {
     const app = express();
 
     app.use(express.json());
+    app.use(cors());
+
+    app.get('/v1', (req, res) => sendSuccess(res));
+    app.post('/v1', (req, res) => sendSuccess(res));
 
     app.post('/v1/auth/login', loginEndpoint);
     app.post('/v1/auth/register', registerEndpoint);

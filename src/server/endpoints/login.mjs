@@ -29,9 +29,9 @@ export default async function (req, res) {
     const {code, data} = await login(dni, password);
     if (code === 0) {
         // Generate a new token for the user
-        const result = await sign({dni, id: data.id});
+        const {result, exp} = await sign({dni, id: data.id});
 
-        return sendSuccess(res, {token: result});
+        return sendSuccess(res, {token: result, expires: exp});
     }
     if (code === 1) return sendError(res, errors.USER_NOT_FOUND);
 

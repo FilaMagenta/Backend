@@ -20,13 +20,11 @@ async function readPublicKey() {
  * Signs some data using jsonwebtoken. Expires in 15 days by default.
  * @param {Object} data The data to sign
  * @param {number} expiresIn The amount of days until the token expires.
- * @return {Promise<string>}
+ * @return {Promise<{result:string,exp:number}>}
  */
 export async function sign(data, expiresIn = TOKEN_EXPIRATION_DAYS) {
-    return jwt.sign({
-        exp: Math.floor(Date.now() / 1000) + (60 * 60 * 24 * expiresIn),
-        data
-    }, await readPrivateKey(), { algorithm: 'RS256' });
+    const exp = Math.floor(Date.now() / 1000) + (60 * 60 * 24 * expiresIn);
+    return {result: jwt.sign({exp, data}, await readPrivateKey(), {algorithm: 'RS256'}), exp};
 }
 
 /**
