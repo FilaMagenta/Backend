@@ -82,18 +82,34 @@ class MetaType {
     /**
      * @param {number} id
      * @param {string} key
+     * @param {boolean} requiresAdmin If true, only admins will be able to update this meta type.
+     * @param {?string} defaultValue The default value to return if the meta type is not set.
      */
-    constructor(id, key) {
+    constructor(id, key, requiresAdmin = false, defaultValue = null) {
+        this.id = id;
         this.key = key;
+        this.requiresAdmin = requiresAdmin;
+        this.defaultValue = defaultValue;
     }
 
     /** @type {number} */ id;
     /** @type {string} */ key;
+    /** @type {boolean} */ requiresAdmin;
+    /** @type {string} */ defaultValue;
 }
 
 export const MetaTypes = {
-    BIRTHDAY: new MetaType(1000, 'birthday')
+    BIRTHDAY: new MetaType(1000, 'birthday'),
+    WHITES_WHEEL_LOCKED: new MetaType(1001, 'whites_wheel_locked', true, 'true'),
+    WHITES_WHEEL_NUMBER: new MetaType(1002, 'whites_wheel_number', true),
+    BLACKS_WHEEL_LOCKED: new MetaType(1003, 'blacks_wheel_locked', true, 'true'),
+    BLACKS_WHEEL_NUMBER: new MetaType(1004, 'blacks_wheel_number', true),
 }
+
+export const UpdateAccountMetaError = {
+    OK: 0,
+    REQUIRES_ADMIN: 1
+};
 
 /**
  * Updates the metadata for the given user.
@@ -110,13 +126,18 @@ export async function setUserMeta(userId, meta) {
  * @param {number} userId
  * @param {MetaType} meta
  * @param {string} value
- * @return {Promise<void>}
+ * @return {Promise<number>}
  */
 export async function updateUserMeta(userId, meta, value) {
     const user = await getUserData(userId);
+    const userAdmin = await isAdmin(user);
+    if (meta.requiresAdmin && userAdmin !== true)
+        return UpdateAccountMetaError.REQUIRES_ADMIN;
     const metadata = user.meta_data;
     const metaIndex = metadata.findIndex((entry) => { return entry.key === meta.key });
     metadata[metaIndex] = { id: meta.id, key: meta.key, value };
 
     await setUserMeta(userId, metadata);
+
+    return UpdateAccountMetaError.OK
 }

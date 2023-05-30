@@ -23,6 +23,10 @@ export function start(port = 3000) {
     app.get('/v1/account', getAccountEndpoint);
 
     app.post('/v1/account/meta/birthday', setAccountMetaEndpoint(MetaTypes.BIRTHDAY));
+    app.post('/v1/account/meta/whites_wheel/locked', setAccountMetaEndpoint(MetaTypes.WHITES_WHEEL_LOCKED));
+    app.post('/v1/account/meta/whites_wheel/number', setAccountMetaEndpoint(MetaTypes.WHITES_WHEEL_NUMBER));
+    app.post('/v1/account/meta/blacks_wheel/locked', setAccountMetaEndpoint(MetaTypes.BLACKS_WHEEL_LOCKED));
+    app.post('/v1/account/meta/blacks_wheel/number', setAccountMetaEndpoint(MetaTypes.BLACKS_WHEEL_NUMBER));
 
     app.get('*', (req, res) => {
         sendError(res, UNKNOWN_ENDPOINT, 404);

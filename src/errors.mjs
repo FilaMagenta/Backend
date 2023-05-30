@@ -33,10 +33,12 @@ export const AUTH_MISSING_HEADER = new Error(50, 'The request is missing an auth
 export const AUTH_INVALID_METHOD = new Error(51, 'Using a non-supported authentication method.');
 export const AUTH_TOKEN_EXPIRED = new Error(52, 'The token you are using has expired.');
 export const AUTH_TOKEN_INVALID = new Error(53, 'The token you are using is not valid.');
+export const AUTH_REQUIRES_ADMIN = new Error(54, 'The operation requested requires you to be an administrator.');
 
 export const UNKNOWN_REGISTER = new Error(1000, 'An unknown error occurred while trying to register.');
 export const UNKNOWN_LOGIN = new Error(1001, 'An unknown error occurred while trying to login.');
 export const UNKNOWN_ACCOUNT = new Error(1002, 'An unknown error occurred while trying to get your account\'s data. Token might be invalid');
+export const UNKNOWN_META = new Error(1003, 'An unknown error occurred while trying to update your account\'s meta.')
 
 export const UNKNOWN_ENDPOINT = new Error(9999, 'Unknown endpoint');
 
@@ -60,10 +62,12 @@ export default {
     AUTH_INVALID_METHOD,
     AUTH_TOKEN_EXPIRED,
     AUTH_TOKEN_INVALID,
+    AUTH_REQUIRES_ADMIN,
 
     UNKNOWN_REGISTER,
     UNKNOWN_LOGIN,
     UNKNOWN_ACCOUNT,
+    UNKNOWN_META,
 
     UNKNOWN_ENDPOINT
 }

@@ -55,7 +55,6 @@ export async function authenticate(req, res, logic) {
         if (expires < now) return sendError(res, errors.AUTH_TOKEN_EXPIRED);
         /** @type {{dni:?string,id:?number}} */ const data = decoded.data;
         if (data.dni == null || data.id == null) return sendError(res, errors.AUTH_TOKEN_INVALID);
-        console.info('Getting token data');
 
         // Token is valid
         await logic(data.dni, data.id);

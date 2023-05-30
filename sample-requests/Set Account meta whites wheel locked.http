@@ -1,0 +1,8 @@
+### Try to update user meta (whites wheel locked = false)
+POST http://localhost:3000/v1/account/meta/whites_wheel/locked
+Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2ODY2NzMyOTQsImRhdGEiOnsiZG5pIjoiMTIzNDU2NzhaIiwiaWQiOjEwMjB9LCJpYXQiOjE2ODUzNzcyOTR9.cxBunNfeCAUSED_tMb9tOXPuSN1YCgxg2kR1DSZOivSNu7qTOe5C1dLWYi5pF5l0vms76pdSklW1htBbFhxY4tFOKuL5WKke8Kb5WLBZ63UA5Kl3-i887yfRhjufWeWyKCCQuX87LcmM7BZY6Yf78RRBBekCScGzhGCQKlYGbSQm1b9QLmYZcrgLPOrnoMNHzAO4rQ28rSQmOxuV59mZga2YpaxncxqvGXWHRzwUq4A_tFVU0grYEuGCevm9V58czYsMuNY6koLE7vjebnFqFLl0Z7IyOxtBz5TVsxMxesd_a61Yq4kAg1gb47xPsjkgG4EpPEkFDn8WInoMdLF8sg
+Content-Type: application/json
+
+{
+  "value": "false"
+}
