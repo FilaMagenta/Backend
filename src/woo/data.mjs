@@ -54,30 +54,6 @@ import api from "./api.mjs";
  * @property {string} _links.collection.href
  */
 
-/**
- *
- * @param {number} userId
- * @return {Promise<UserData>}
- */
-export async function getUserData(userId) {
-    const user = await api.get(`customers/${userId}`);
-    return user.data;
-}
-
-/**
- * Checks whether a user is administrator.
- * @param {UserData|number} data If `UserData` is passed, it's checked from it. Otherwise, a user id is required, which
- * is used for fetching that user's data.
- * @return {?boolean} May return null of invalid data is passed.
- */
-export async function isAdmin(data) {
-    if (data.hasOwnProperty('role'))
-        return data.role === 'administrator';
-    if (typeof data === 'number')
-        return (await getUserData(data)).role === 'administrator';
-    return null;
-}
-
 class MetaType {
     /**
      * @param {number} id
@@ -104,6 +80,44 @@ export const MetaTypes = {
     WHITES_WHEEL_NUMBER: new MetaType(1002, 'whites_wheel_number', true),
     BLACKS_WHEEL_LOCKED: new MetaType(1003, 'blacks_wheel_locked', true, 'true'),
     BLACKS_WHEEL_NUMBER: new MetaType(1004, 'blacks_wheel_number', true),
+}
+
+/**
+ *
+ * @param {number} userId
+ * @return {Promise<UserData>}
+ */
+export async function getUserData(userId) {
+    const user = await api.get(`customers/${userId}`);
+    /** @type {UserData} */ const data = user.data;
+
+    /** @type {MetaData[]} */ const metaData = data.meta_data ?? [];
+    const metaTypes = Object.entries(MetaTypes);
+    for (const [_, metaType] of metaTypes) {
+        // Append default value just for MetaType with default
+        if (metaType.defaultValue == null) continue;
+
+        // Set default value if not already set
+        const existingIndex = metaData.findIndex((item) => item.key === metaType.key);
+        if (existingIndex < 0) metaData.push({id: metaType.id, key: metaType.key, value: metaType.defaultValue});
+    }
+    data.meta_data = metaData;
+
+    return data;
+}
+
+/**
+ * Checks whether a user is administrator.
+ * @param {UserData|number} data If `UserData` is passed, it's checked from it. Otherwise, a user id is required, which
+ * is used for fetching that user's data.
+ * @return {?boolean} May return null of invalid data is passed.
+ */
+export async function isAdmin(data) {
+    if (data.hasOwnProperty('role'))
+        return data.role === 'administrator';
+    if (typeof data === 'number')
+        return (await getUserData(data)).role === 'administrator';
+    return null;
 }
 
 export const UpdateAccountMetaError = {

@@ -45,3 +45,21 @@ export function setAccountMetaEndpoint(metaType) {
         });
     }
 }
+
+/**
+ * Provides the logic of the account meta get endpoint.
+ * @param {MetaType} metaType
+ * @return {Endpoint}
+ */
+export function getAccountMetaEndpoint(metaType) {
+    return async (req, res) => {
+        return authenticate(req, res, async (dni, userId) => {
+            const body = req.body;
+            /** @type {?string} */ const value = body.value;
+            if (value == null) return sendError(res, MISSING_VALUE);
+
+            const result = await getUserData(userId);
+            // TODO
+        });
+    }
+}
