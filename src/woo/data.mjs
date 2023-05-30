@@ -80,6 +80,7 @@ export const MetaTypes = {
     WHITES_WHEEL_NUMBER: new MetaType(1002, 'whites_wheel_number', true),
     BLACKS_WHEEL_LOCKED: new MetaType(1003, 'blacks_wheel_locked', true, 'true'),
     BLACKS_WHEEL_NUMBER: new MetaType(1004, 'blacks_wheel_number', true),
+    PASSWORD_HASH: new MetaType(1005, 'password_hash'),
 }
 
 /**

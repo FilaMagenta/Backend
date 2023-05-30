@@ -1,5 +1,6 @@
-import UserNotFoundError from "../errors/UserNotFoundError.js";
-import api from './api.mjs';
+import api, {multiGet} from './api.mjs';
+import {MetaTypes, UpdateAccountMetaError, updateUserMeta} from "./data.mjs";
+import {hashPassword, verifyPassword} from "../validation/passwords.js";
 
 /**
  * @typedef {Object} AuthenticationError
@@ -12,6 +13,7 @@ const RegistrationError = {
     OK: 0,
     USERNAME_ALREADY_EXISTS: 1,
     EMAIL_ALREADY_EXISTS: 2,
+    PASSWORD_STORAGE: 3,
     UNKNOWN: (err) => { return {code: 255, err} }
 };
 
@@ -30,6 +32,8 @@ class AuxError {
 const LoginError = {
     OK: (user) => { return new AuxError(0, user) },
     USER_NOT_FOUND: () => { return new AuxError(1) },
+    NO_PASSWORD: () => { return new AuxError(2) },
+    WRONG_PASSWORD: () => { return new AuxError(3) },
     UNKNOWN: (err) => { return new AuxError(255, err) }
 };
 
@@ -46,16 +50,23 @@ export default {
      */
     login: async (dni, password) => {
         try {
-            const result = await api.get('customers', {per_page: 10})
-            /** @type {Object[]} */ const {data} = result;
-            if (data.length <= 0) return LoginError.USER_NOT_FOUND();
-            console.log('len =', data.length, 'data:', data)
-            console.log('Users: ', data.map((el) => el['username']));
-            const user = data[0];
-            console.info("user", user)
-
-            return LoginError.OK(user);
+            /** @type {UserData[]} */
+            const result = await multiGet('customers')
+            for (const obj of result) {
+                if (obj.username === dni) {
+                    // Found the user, now verify the password
+                    console.log('user:', obj);
+                    const hash = obj.meta_data.find((meta) => meta.key === 'password_hash')?.value;
+                    if (hash == null)
+                        return LoginError.NO_PASSWORD();
+                    if (await verifyPassword(password, hash) === true)
+                        return LoginError.OK(obj);
+                    return LoginError.WRONG_PASSWORD();
+                }
+            }
+            return LoginError.USER_NOT_FOUND();
         } catch (err) {
+            console.error(err);
             return LoginError.UNKNOWN(err);
         }
     },
@@ -70,11 +81,16 @@ export default {
      */
     register: async (dni, password, email, name, surname) => {
         try {
-            await api.post(
+            const registerResult = await api.post(
                 'customers',
                 {username: dni, email, first_name: name, last_name: surname, password}
             )
-            return RegistrationError.OK;
+            const {/** @type {UserData} */ data} = registerResult;
+            const userId = data.id;
+            const result = await updateUserMeta(userId, MetaTypes.PASSWORD_HASH, await hashPassword(password));
+            if (result === UpdateAccountMetaError.OK)
+                return RegistrationError.OK;
+            return RegistrationError.PASSWORD_STORAGE;
         } catch (e) {
             /** @type {AuthenticationError} */ const data = e.response.data;
             switch (data.code) {

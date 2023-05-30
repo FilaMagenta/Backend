@@ -34,6 +34,8 @@ export const AUTH_INVALID_METHOD = new Error(51, 'Using a non-supported authenti
 export const AUTH_TOKEN_EXPIRED = new Error(52, 'The token you are using has expired.');
 export const AUTH_TOKEN_INVALID = new Error(53, 'The token you are using is not valid.');
 export const AUTH_REQUIRES_ADMIN = new Error(54, 'The operation requested requires you to be an administrator.');
+export const AUTH_NO_PASSWORD = new Error(55, 'Your account doesn\'t have an associated password. You can\'t log in.');
+export const AUTH_WRONG_PASSWORD = new Error(56, 'Wrong password.');
 
 export const UNKNOWN_REGISTER = new Error(1000, 'An unknown error occurred while trying to register.');
 export const UNKNOWN_LOGIN = new Error(1001, 'An unknown error occurred while trying to login.');
@@ -63,6 +65,8 @@ export default {
     AUTH_TOKEN_EXPIRED,
     AUTH_TOKEN_INVALID,
     AUTH_REQUIRES_ADMIN,
+    AUTH_NO_PASSWORD,
+    AUTH_WRONG_PASSWORD,
 
     UNKNOWN_REGISTER,
     UNKNOWN_LOGIN,

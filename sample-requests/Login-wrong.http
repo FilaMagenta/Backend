@@ -1,0 +1,8 @@
+### Login as sample user
+POST http://localhost:3000/v1/auth/login
+Content-Type: application/json
+
+{
+  "dni":"12345678Z",
+  "password":"wrong-password"
+}

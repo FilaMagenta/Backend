@@ -34,6 +34,8 @@ export default async function (req, res) {
         return sendSuccess(res, {token: result, expires: exp});
     }
     if (code === 1) return sendError(res, errors.USER_NOT_FOUND);
+    if (code === 2) return sendError(res, errors.AUTH_NO_PASSWORD);
+    if (code === 3) return sendError(res, errors.AUTH_WRONG_PASSWORD);
 
     return sendError(res, errors.UNKNOWN_REGISTER, 500, {error: data});
 }
