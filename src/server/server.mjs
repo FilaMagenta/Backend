@@ -3,7 +3,7 @@ import express from 'express';
 
 import loginEndpoint from './endpoints/login.mjs';
 import registerEndpoint from './endpoints/register.mjs';
-import {getAccountEndpoint, setAccountMetaEndpoint} from './endpoints/account.mjs';
+import {getAccountEndpoint, setAccountMetaEndpoint, getAccountMetaEndpoint} from './endpoints/account.mjs';
 import {MetaTypes} from '../woo/data.mjs';
 import {sendError} from "./utils.mjs";
 import {UNKNOWN_ENDPOINT} from "../errors.mjs";
@@ -27,6 +27,12 @@ export function start(port = 3000) {
     app.post('/v1/account/meta/whites_wheel/number', setAccountMetaEndpoint(MetaTypes.WHITES_WHEEL_NUMBER));
     app.post('/v1/account/meta/blacks_wheel/locked', setAccountMetaEndpoint(MetaTypes.BLACKS_WHEEL_LOCKED));
     app.post('/v1/account/meta/blacks_wheel/number', setAccountMetaEndpoint(MetaTypes.BLACKS_WHEEL_NUMBER));
+
+    app.get('/v1/account/meta/birthday', getAccountMetaEndpoint(MetaTypes.BIRTHDAY));
+    app.get('/v1/account/meta/whites_wheel/locked', getAccountMetaEndpoint(MetaTypes.WHITES_WHEEL_LOCKED));
+    app.get('/v1/account/meta/whites_wheel/number', getAccountMetaEndpoint(MetaTypes.WHITES_WHEEL_NUMBER));
+    app.get('/v1/account/meta/blacks_wheel/locked', getAccountMetaEndpoint(MetaTypes.BLACKS_WHEEL_LOCKED));
+    app.get('/v1/account/meta/blacks_wheel/number', getAccountMetaEndpoint(MetaTypes.BLACKS_WHEEL_NUMBER));
 
     app.get('*', (req, res) => {
         sendError(res, UNKNOWN_ENDPOINT, 404);

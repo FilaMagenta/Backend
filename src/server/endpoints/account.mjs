@@ -54,12 +54,9 @@ export function setAccountMetaEndpoint(metaType) {
 export function getAccountMetaEndpoint(metaType) {
     return async (req, res) => {
         return authenticate(req, res, async (dni, userId) => {
-            const body = req.body;
-            /** @type {?string} */ const value = body.value;
-            if (value == null) return sendError(res, MISSING_VALUE);
-
             const result = await getUserData(userId);
-            // TODO
+            const meta = result.meta_data.find((item) => item.key === metaType.key);
+            sendSuccess(res, {value: meta.value})
         });
     }
 }
