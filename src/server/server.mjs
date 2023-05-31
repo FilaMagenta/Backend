@@ -8,6 +8,7 @@ import {getAccountEndpoint, setAccountMetaEndpoint, getAccountMetaEndpoint} from
 import {MetaTypes} from '../woo/data.mjs';
 import {sendError, sendSuccess} from "./utils.mjs";
 import {UNKNOWN_ENDPOINT} from "../errors.mjs";
+import {eventsEndpoint} from "./endpoints/events.mjs";
 
 /**
  * Starts the webserver on the given port.
@@ -38,6 +39,8 @@ export function start(port = 3000) {
     app.get('/v1/account/meta/whites_wheel/number', getAccountMetaEndpoint(MetaTypes.WHITES_WHEEL_NUMBER));
     app.get('/v1/account/meta/blacks_wheel/locked', getAccountMetaEndpoint(MetaTypes.BLACKS_WHEEL_LOCKED));
     app.get('/v1/account/meta/blacks_wheel/number', getAccountMetaEndpoint(MetaTypes.BLACKS_WHEEL_NUMBER));
+
+    app.get('/v1/events', eventsEndpoint);
 
     app.get('*', (req, res) => {
         sendError(res, UNKNOWN_ENDPOINT, 404);

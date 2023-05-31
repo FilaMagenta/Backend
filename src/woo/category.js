@@ -25,6 +25,11 @@ import {get, post} from './api.mjs';
  * @property {string} _links.collection.href
  */
 
+/**
+ * Caches the ID of each category according to their name.
+ * @type {Map<string, number>}}
+ */
+const CategoryIdsCache = new Map();
 
 class Category {
     /**
@@ -46,6 +51,19 @@ class Category {
      */
     getWooCategory() {
         return { slug: this.name, name: this.name }
+    }
+
+    /**
+     * Fetches the id of this category.
+     * @return {Promise<number|null>} The id of the category, may be null if the category doesn't exist.
+     */
+    async getId() {
+        const id = CategoryIdsCache.get(this.name);
+        if (id != null) return id;
+        const category = await getCategory(this);
+        if (category == null) return null;
+        CategoryIdsCache.set(this.name, category.id);
+        return category.id;
     }
 }
 
