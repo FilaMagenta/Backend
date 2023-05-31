@@ -7,3 +7,9 @@ services:
     restart: unless-stopped
     ports:
       - "80:80"
+    environment:
+      - WOO_SERVER=
+      - WOO_CONSUMER_KEY=
+      - WOO_CONSUMER_SECRET=
+    volumes:
+      - keys:/usr/src/app/keys
