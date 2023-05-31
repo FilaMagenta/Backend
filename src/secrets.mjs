@@ -57,5 +57,5 @@ export default {
      * @param {string} key
      * @return {Promise<string>}
      */
-    get: async (key) => (await read()).get(key)
+    get: async (key) => (await read()).get(key) ?? process.env[key]
 }
