@@ -36,6 +36,7 @@ export async function newEventEndpoint (req, res) {
          */ const prices = body.prices;
         /** @type {?string} */ const until = body.until;
         /** @type {?string} */ const date = body.date;
+        /** @type {?number} */ const externalLimit = body.externalLimit ?? -1;
 
         if (name == null) return sendError(res, errors.MISSING_NAME);
         if (description == null) return sendError(res, errors.MISSING_DESCRIPTION);

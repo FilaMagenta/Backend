@@ -115,6 +115,7 @@ export async function getEvents() {
  * @param {?EventPrice[]} prices A list of prices for the event. If null or empty, the event is free.
  * @param {?string} until If any, the last day for signing up to the event.
  * @param {?string} date If any, the event's date and time.
+ * @param {number} externalLimit The maximum amount of people that a member can invite to this event. -1 for infinite.
  * @return {Promise<?number>}
  */
 export async function newEvent(
@@ -124,7 +125,8 @@ export async function newEvent(
     stock,
     prices,
     until,
-    date
+    date,
+    externalLimit
 ) {
     const isFree = prices == null || prices.length <= 0;
     const attribute = await ATTRIBUTE_SECTION.getWooAttribute();
@@ -146,6 +148,7 @@ export async function newEvent(
         meta_data: [
             { id: 0, key: 'until', value: until },
             { id: 1, key: 'date', value: date },
+            { id: 2, key: 'external_limit', value: externalLimit }
         ]
     };
     if (isFree) product.regular_price = '0.0';
