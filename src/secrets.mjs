@@ -60,5 +60,8 @@ export default {
      * @param {string} key
      * @return {Promise<string>}
      */
-    get: async (key) => (await read()).get(key) ?? process.env[key]
+    get: async (key) => {
+        const envKey = key.replaceAll('.', '_').toUpperCase();
+        return (await read()).get(key) ?? process.env[envKey];
+    }
 }
