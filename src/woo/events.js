@@ -127,22 +127,23 @@ export async function newEvent(name, visible, description, stock, prices) {
         manage_stock: true,
         stock_quantity: stock,
         categories: [
-            await CATEGORY_EVENTS.getWooCategory(),
-        ],
-        attributes: isFree ? [] : [
-            {
-                id: attribute.id,
-                visible: true,
-                position: 0,
-                variation: true,
-                options: prices.map((price) => price.section)
-            }
+            { id: await CATEGORY_EVENTS.getId() }
         ],
         virtual: true,
         shipping_required: false,
-        type: isFree ? 'simple' : 'variable'
+        type: isFree ? 'simple' : 'variable',
+        purchasable: true
     };
-    if (isFree) product.regular_price = 0;
+    if (isFree) product.regular_price = '0.0';
+    else product.attributes = [
+        {
+            id: attribute.id,
+            visible: true,
+            position: 0,
+            variation: true,
+            options: prices.map((price) => price.section)
+        }
+    ];
     console.log('Creating product:', product);
     const createResult = await post('products', product);
     if (createResult.status < 200 || createResult.status >= 300) return null;
