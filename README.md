@@ -1,4 +1,7 @@
 # Filà Magenta - Backend
+
+[![Dev Docker size](https://img.shields.io/docker/image-size/arnyminerz/filamagenta/development?label=Dev%20image%20size&logo=docker&style=for-the-badge)](https://hub.docker.com/repository/docker/arnyminerz/filamagenta)
+
 ## Environment Variables
 ### `PROPERTIES_FILE`
 If defined, specifies the location of the secrets properties file.
