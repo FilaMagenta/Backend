@@ -35,18 +35,21 @@ async function getPropertiesFile() {
  * @return {Promise<Map<string, string>>}
  */
 async function read() {
-    const contents = await fs.readFile(await getPropertiesFile());
-    const lines = contents.toString().split('\n');
     /** @type {Map<string, string>} */
     const result = new Map();
-    for (const line of lines) {
-        if (line.startsWith('#')) continue;
-        if (line.trim().length <= 0) continue;
+    try {
+        const contents = await fs.readFile(await getPropertiesFile());
+        const lines = contents.toString().split('\n');
+        for (const line of lines) {
+            if (line.startsWith('#')) continue;
+            if (line.trim().length <= 0) continue;
 
-        const pair = line.split('=')
-        const key = pair[0];
-        const value = pair.slice(1).join('=');
-        result.set(key, value);
+            const pair = line.split('=')
+            const key = pair[0];
+            const value = pair.slice(1).join('=');
+            result.set(key, value);
+        }
+    } catch (e) {
     }
     return result;
 }
