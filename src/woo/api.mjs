@@ -3,6 +3,7 @@ import pkg from '@woocommerce/woocommerce-rest-api';
 const WooCommerceRestApi = pkg.default;
 
 import secrets from '../secrets.mjs';
+import {getCategories, newCategory, Categories} from "./category.js";
 
 /** @type {WooCommerceRestApi} */
 const api = new WooCommerceRestApi({
@@ -22,6 +23,27 @@ export default api;
  * @property {Object} config
  * @property {Object[]} data
  */
+
+/**
+ * Performs a GET request on the Woo API.
+ * @param {string} endpoint
+ * @param {Object} params
+ * @return {Promise<ApiResponseList>}
+ */
+export async function get(endpoint, params = {}) {
+    return await api.get(endpoint, params)
+}
+
+/**
+ * Performs a POST request on the Woo API.
+ * @param {string} endpoint
+ * @param {Object} data
+ * @param {Object} params
+ * @return {Promise}
+ */
+export async function post(endpoint, data = {}, params = {}) {
+    return await api.post(endpoint, data, params)
+}
 
 /**
  * Performs a get request on a desired page.
@@ -49,4 +71,24 @@ export async function multiGet(endpoint) {
          for (const item of result.data) list.push(item);
     } while (parseInt(result.headers['w-wp-totalpages']) > page)
     return list;
+}
+
+/**
+ * Initializes the target WooCommerce installation. Creating all the categories and background necessary.
+ * @return {Promise<void>}
+ */
+export async function initApi() {
+    const categories = await getCategories();
+    console.info('Categories:', categories);
+    console.info('Initializing Woo API...');
+    for (const category of Categories) {
+        // Check if the category already exists
+        const existingCategory = categories.find((cat) => cat.name === category.name);
+        if (existingCategory != null) continue;
+        // If it doesn't exist, create
+        console.info(`Creating category #${category.name}...`);
+        const result = await newCategory(category);
+        console.info(`Create result:`, result);
+    }
+    console.info('All categories ready!');
 }
