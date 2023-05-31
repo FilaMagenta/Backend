@@ -52,10 +52,11 @@ export default {
         try {
             /** @type {UserData[]} */
             const result = await multiGet('customers')
+            console.log('Got', result.length, 'users');
             for (const obj of result) {
                 if (obj.username === dni) {
                     // Found the user, now verify the password
-                    console.log('user:', obj);
+                    console.log('meta:', obj.meta_data)
                     const hash = obj.meta_data.find((meta) => meta.key === 'password_hash')?.value;
                     if (hash == null)
                         return LoginError.NO_PASSWORD();
@@ -87,7 +88,8 @@ export default {
             )
             const {/** @type {UserData} */ data} = registerResult;
             const userId = data.id;
-            const result = await updateUserMeta(userId, MetaTypes.PASSWORD_HASH, await hashPassword(password));
+            const hashedPassword = await hashPassword(password);
+            const result = await updateUserMeta(userId, MetaTypes.PASSWORD_HASH, hashedPassword);
             if (result === UpdateAccountMetaError.OK)
                 return RegistrationError.OK;
             return RegistrationError.PASSWORD_STORAGE;

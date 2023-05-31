@@ -89,8 +89,7 @@ export const MetaTypes = {
  * @return {Promise<UserData>}
  */
 export async function getUserData(userId) {
-    const user = await api.get(`customers/${userId}`);
-    /** @type {UserData} */ const data = user.data;
+    const {/** @type {UserData} */ data} = await api.get(`customers/${userId}`);
 
     /** @type {MetaData[]} */ const metaData = data.meta_data ?? [];
     const metaTypes = Object.entries(MetaTypes);
@@ -150,7 +149,10 @@ export async function updateUserMeta(userId, meta, value) {
         return UpdateAccountMetaError.REQUIRES_ADMIN;
     const metadata = user.meta_data;
     const metaIndex = metadata.findIndex((entry) => { return entry.key === meta.key });
-    metadata[metaIndex] = { id: meta.id, key: meta.key, value };
+    if (metaIndex < 0)
+        metadata.push({ id: meta.id, key: meta.key, value });
+    else
+        metadata[metaIndex] = { id: meta.id, key: meta.key, value };
 
     await setUserMeta(userId, metadata);
 
