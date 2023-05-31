@@ -113,9 +113,19 @@ export async function getEvents() {
  * @param {string} description The description of the event.
  * @param {number} stock The amount of stock the event has.
  * @param {?EventPrice[]} prices A list of prices for the event. If null or empty, the event is free.
+ * @param {?string} until If any, the last day for signing up to the event.
+ * @param {?string} date If any, the event's date and time.
  * @return {Promise<?number>}
  */
-export async function newEvent(name, visible, description, stock, prices) {
+export async function newEvent(
+    name,
+    visible,
+    description,
+    stock,
+    prices,
+    until,
+    date
+) {
     const isFree = prices == null || prices.length <= 0;
     const attribute = await ATTRIBUTE_SECTION.getWooAttribute();
 
@@ -132,7 +142,11 @@ export async function newEvent(name, visible, description, stock, prices) {
         virtual: true,
         shipping_required: false,
         type: isFree ? 'simple' : 'variable',
-        purchasable: true
+        purchasable: true,
+        meta_data: [
+            { id: 0, key: 'until', value: until },
+            { id: 1, key: 'date', value: date },
+        ]
     };
     if (isFree) product.regular_price = '0.0';
     else product.attributes = [

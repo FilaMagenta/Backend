@@ -34,13 +34,15 @@ export async function newEventEndpoint (req, res) {
          * If null or empty, the event is considered to be free.
          * @type {?EventPrice[]}
          */ const prices = body.prices;
+        /** @type {?string} */ const until = body.until;
+        /** @type {?string} */ const date = body.date;
 
         if (name == null) return sendError(res, errors.MISSING_NAME);
         if (description == null) return sendError(res, errors.MISSING_DESCRIPTION);
         if (stock == null) return sendError(res, errors.MISSING_STOCK);
 
         try {
-            const productId = await newEvent(name, visible, description, stock, prices);
+            const productId = await newEvent(name, visible, description, stock, prices, until, date);
             if (productId == null) {
                 console.error('Could not create product.');
                 return sendError(res, UNKNOWN_EVENT_NEW, 500);
