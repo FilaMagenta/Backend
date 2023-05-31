@@ -1,6 +1,6 @@
 {
   "name": "filamagenta-backend",
-  "version": "0.0.1-dev01",
+  "version": "0.1.0",
   "description": "The backend server for all the Fila Magenta products.",
   "main": "index.mjs",
   "type": "module",
