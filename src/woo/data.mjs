@@ -1,3 +1,5 @@
+// @ts-check
+
 import api from "./api.mjs";
 
 /**
@@ -54,12 +56,21 @@ import api from "./api.mjs";
  * @property {string} _links.collection.href
  */
 
+/**
+ * @typedef {'default','fester'} UserSection
+ */
+
+/**
+ * Defines some metadata about a user.
+ * @template T
+ */
 class MetaType {
     /**
      * @param {number} id
      * @param {string} key
      * @param {boolean} requiresAdmin If true, only admins will be able to update this meta type.
-     * @param {?string} defaultValue The default value to return if the meta type is not set.
+     * @param {?T} defaultValue The default value to return if the meta type is not set.
+     * @template [ValueType]
      */
     constructor(id, key, requiresAdmin = false, defaultValue = null) {
         this.id = id;
@@ -71,16 +82,23 @@ class MetaType {
     /** @type {number} */ id;
     /** @type {string} */ key;
     /** @type {boolean} */ requiresAdmin;
-    /** @type {string} */ defaultValue;
+    /** @type {?T} */ defaultValue;
 }
 
 export const MetaTypes = {
     BIRTHDAY: new MetaType(1000, 'birthday'),
+    /** @type {MetaType<string>} */
     WHITES_WHEEL_LOCKED: new MetaType(1001, 'whites_wheel_locked', true, 'true'),
+    /** @type {MetaType<number>} */
     WHITES_WHEEL_NUMBER: new MetaType(1002, 'whites_wheel_number', true),
+    /** @type {MetaType<string>} */
     BLACKS_WHEEL_LOCKED: new MetaType(1003, 'blacks_wheel_locked', true, 'true'),
+    /** @type {MetaType<number>} */
     BLACKS_WHEEL_NUMBER: new MetaType(1004, 'blacks_wheel_number', true),
+    /** @type {MetaType<string>} */
     PASSWORD_HASH: new MetaType(1005, 'password_hash'),
+    /** @type {MetaType<UserSection>} */
+    SECTION: new MetaType(1006, 'section', true, 'default')
 }
 
 /**
@@ -137,9 +155,10 @@ export async function setUserMeta(userId, meta) {
 
 /**
  * Updates the metadata value of the given MetaType for the desired user.
+ * @template T
  * @param {number} userId
- * @param {MetaType} meta
- * @param {string} value
+ * @param {MetaType<T>} meta
+ * @param {T} value
  * @return {Promise<number>}
  */
 export async function updateUserMeta(userId, meta, value) {

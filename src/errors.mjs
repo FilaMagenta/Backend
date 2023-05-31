@@ -21,6 +21,8 @@ export const MISSING_EMAIL = new Error(3, 'The request is missing the required `
 export const MISSING_NAME = new Error(4, 'The request is missing the required `name` parameter in the body.');
 export const MISSING_SURNAME = new Error(5, 'The request is missing the required `surname` parameter in the body.');
 export const MISSING_VALUE = new Error(5, 'The request is missing the required `value` parameter in the body.');
+export const MISSING_DESCRIPTION = new Error(6, 'The request is missing the required `description` parameter in the body.');
+export const MISSING_STOCK = new Error(6, 'The request is missing the required `stock` parameter in the body.');
 
 export const INVALID_DNI = new Error(20, 'The DNI passed is not valid.');
 
@@ -36,11 +38,13 @@ export const AUTH_TOKEN_INVALID = new Error(53, 'The token you are using is not 
 export const AUTH_REQUIRES_ADMIN = new Error(54, 'The operation requested requires you to be an administrator.');
 export const AUTH_NO_PASSWORD = new Error(55, 'Your account doesn\'t have an associated password. You can\'t log in.');
 export const AUTH_WRONG_PASSWORD = new Error(56, 'Wrong password.');
+export const AUTH_FORBIDDEN = new Error(57, 'You are not authorized to do this.');
 
 export const UNKNOWN_REGISTER = new Error(1000, 'An unknown error occurred while trying to register.');
 export const UNKNOWN_LOGIN = new Error(1001, 'An unknown error occurred while trying to login.');
 export const UNKNOWN_ACCOUNT = new Error(1002, 'An unknown error occurred while trying to get your account\'s data. Token might be invalid');
 export const UNKNOWN_META = new Error(1003, 'An unknown error occurred while trying to update your account\'s meta.')
+export const UNKNOWN_EVENT_NEW = new Error(1004, 'An unknown error occurred while trying to create a new event.')
 
 export const UNKNOWN_ENDPOINT = new Error(9999, 'Unknown endpoint');
 
@@ -52,6 +56,8 @@ export default {
     MISSING_NAME,
     MISSING_SURNAME,
     MISSING_VALUE,
+    MISSING_DESCRIPTION,
+    MISSING_STOCK,
 
     INVALID_DNI,
 
@@ -67,6 +73,7 @@ export default {
     AUTH_REQUIRES_ADMIN,
     AUTH_NO_PASSWORD,
     AUTH_WRONG_PASSWORD,
+    AUTH_FORBIDDEN,
 
     UNKNOWN_REGISTER,
     UNKNOWN_LOGIN,

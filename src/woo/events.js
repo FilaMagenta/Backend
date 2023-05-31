@@ -86,8 +86,9 @@
  */
 
 
-import {get} from "./api.mjs";
+import {get, post} from "./api.mjs";
 import {CATEGORY_EVENTS} from "./category.js";
+import {ATTRIBUTE_SECTION} from "./attribute.js";
 
 /**
  * Fetches all the events available in the server.
@@ -97,4 +98,79 @@ export async function getEvents() {
     const eventsCategory = await CATEGORY_EVENTS.getId();
     const result = await get('products', {category: eventsCategory})
     return result.data;
+}
+
+/**
+ * @typedef {Object} EventPrice
+ * @property {UserSection} section
+ * @property {number} price
+ */
+
+/**
+ *
+ * @param {string} name The name of the event.
+ * @param {boolean} visible Whether the event should be visible to normal users. Events are always visible for admins.
+ * @param {string} description The description of the event.
+ * @param {number} stock The amount of stock the event has.
+ * @param {?EventPrice[]} prices A list of prices for the event. If null or empty, the event is free.
+ * @return {Promise<?number>}
+ */
+export async function newEvent(name, visible, description, stock, prices) {
+    const isFree = prices == null || prices.length <= 0;
+    const attribute = await ATTRIBUTE_SECTION.getWooAttribute();
+
+    // Create product
+    const product = {
+        name,
+        visible,
+        description,
+        manage_stock: true,
+        stock_quantity: stock,
+        categories: [
+            await CATEGORY_EVENTS.getWooCategory(),
+        ],
+        attributes: isFree ? [] : [
+            {
+                id: attribute.id,
+                visible: true,
+                position: 0,
+                variation: true,
+                options: prices.map((price) => price.section)
+            }
+        ],
+        virtual: true,
+        shipping_required: false,
+        type: isFree ? 'simple' : 'variable'
+    };
+    if (isFree) product.regular_price = 0;
+    console.log('Creating product:', product);
+    const createResult = await post('products', product);
+    if (createResult.status < 200 || createResult.status >= 300) return null;
+    const productId = createResult.data.id;
+
+    // Set price if any
+    if (!isFree) {
+        // There are prices, create variations
+        console.log(`Creating ${prices.length} variants for #${productId}`);
+        for (let c = 0; c < prices.length; c++) {
+            const price = prices[c];
+            const variation = {
+                // description: 'Section',
+                regular_price: price.price,
+                // purchasable: true,
+                // virtual: true,
+                attributes: [
+                    { id: attribute.id, option: price.section }
+                ],
+                // sku: `${productId}-section-${price.section}`
+            }
+            console.log(`Creating variation for section`, price.section, '- Variation:', variation);
+            const variationCreateResult = await post(`products/${productId}/variations`, variation);
+            if (variationCreateResult.status < 200 || variationCreateResult.status >= 300)
+                console.error('Could not create variation for price:', price, '- Product ID:', productId);
+            console.log(`  Result:`, variationCreateResult);
+        }
+    }
+
+    return productId;
 }

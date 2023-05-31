@@ -4,7 +4,7 @@ import dniValidator from '../../validation/dni.mjs';
 import {sign} from '../../validation/tokens.mjs';
 import authentication from "../../woo/authentication.js";
 
-const {login, LoginError} = authentication;
+const {login} = authentication;
 
 /**
  * Provides the logic of the login endpoint.

@@ -52,11 +52,9 @@ export default {
         try {
             /** @type {UserData[]} */
             const result = await multiGet('customers')
-            console.log('Got', result.length, 'users');
             for (const obj of result) {
                 if (obj.username === dni) {
                     // Found the user, now verify the password
-                    console.log('meta:', obj.meta_data)
                     const hash = obj.meta_data.find((meta) => meta.key === 'password_hash')?.value;
                     if (hash == null)
                         return LoginError.NO_PASSWORD();

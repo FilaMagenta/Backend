@@ -4,6 +4,7 @@ const WooCommerceRestApi = pkg.default;
 
 import secrets from '../secrets.mjs';
 import {getCategories, newCategory, Categories} from "./category.js";
+import {Attributes, getAttributes, newAttribute} from "./attribute.js";
 
 /** @type {WooCommerceRestApi} */
 const api = new WooCommerceRestApi({
@@ -25,10 +26,19 @@ export default api;
  */
 
 /**
+ * @typedef {Object} ApiResponse
+ * @property {number} status
+ * @property {string} statusText
+ * @property {Map<string, string>} headers
+ * @property {Object} config
+ * @property {Object|Object[]} data
+ */
+
+/**
  * Performs a GET request on the Woo API.
  * @param {string} endpoint
  * @param {Object} params
- * @return {Promise<ApiResponseList>}
+ * @return {Promise<ApiResponse>}
  */
 export async function get(endpoint, params = {}) {
     return await api.get(endpoint, params)
@@ -39,7 +49,7 @@ export async function get(endpoint, params = {}) {
  * @param {string} endpoint
  * @param {Object} data
  * @param {Object} params
- * @return {Promise}
+ * @return {Promise<ApiResponse>}
  */
 export async function post(endpoint, data = {}, params = {}) {
     return await api.post(endpoint, data, params)
@@ -78,17 +88,31 @@ export async function multiGet(endpoint) {
  * @return {Promise<void>}
  */
 export async function initApi() {
-    const categories = await getCategories();
-    console.info('Categories:', categories);
     console.info('Initializing Woo API...');
+
+    console.info('Preparing categories...');
+    const categories = await getCategories();
     for (const category of Categories) {
         // Check if the category already exists
         const existingCategory = categories.find((cat) => cat.name === category.name);
         if (existingCategory != null) continue;
         // If it doesn't exist, create
-        console.info(`Creating category #${category.name}...`);
+        console.info(`  Creating category #${category.name}...`);
         const result = await newCategory(category);
-        console.info(`Create result:`, result);
+        console.info(`  Create result:`, result);
     }
-    console.info('All categories ready!');
+    console.info('  All categories ready!');
+
+    console.info('Preparing attributes...');
+    const attributes = await getAttributes();
+    for (const attribute of Attributes) {
+        // Check if already exists
+        const existing = attributes.find((item) => item.name === attribute.name);
+        if (existing != null) continue;
+        // If it doesn't exist, create
+        console.info(`  Creating attribute #${attribute.name}...`);
+        const result = await newAttribute(attribute);
+        console.info(`  Create result:`, result);
+    }
+    console.info('  All attributes ready!');
 }

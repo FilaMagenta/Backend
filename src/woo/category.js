@@ -49,8 +49,8 @@ class Category {
      * Creates a new WooCategory object from this.
      * @return {WooCategory}
      */
-    getWooCategory() {
-        return { slug: this.name, name: this.name }
+    async getWooCategory() {
+        return { id: await this.getId(), slug: this.name, name: this.name }
     }
 
     /**
@@ -101,8 +101,8 @@ export async function getCategory(category) {
 /**
  * Creates a new category.
  * @param {Category} category
- * @return {Promise<void>}
+ * @return {Promise<ApiResponse>}
  */
 export async function newCategory(category) {
-    return await post('products/categories', category.getWooCategory());
+    return await post('products/categories', await category.getWooCategory());
 }
