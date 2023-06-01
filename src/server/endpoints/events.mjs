@@ -43,7 +43,7 @@ export async function newEventEndpoint (req, res) {
         if (stock == null) return sendError(res, errors.MISSING_STOCK);
 
         try {
-            const productId = await newEvent(name, visible, description, stock, prices, until, date);
+            const productId = await newEvent(name, visible, description, stock, prices, until, date, externalLimit);
             if (productId == null) {
                 console.error('Could not create product.');
                 return sendError(res, UNKNOWN_EVENT_NEW, 500);
