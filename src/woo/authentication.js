@@ -50,8 +50,9 @@ export default {
      */
     login: async (dni, password) => {
         try {
+            // FIXME: Do not get a list of customers, search for the customer with the given DNI
             /** @type {UserData[]} */
-            const result = await multiGet('customers')
+            const result = await multiGet('customers', { role: 'all' })
             for (const obj of result) {
                 if (obj.username === dni) {
                     // Found the user, now verify the password

@@ -58,26 +58,30 @@ export async function post(endpoint, data = {}, params = {}) {
 /**
  * Performs a get request on a desired page.
  * @param {string} endpoint
+ * @param {Object} options
  * @param {number} page
  * @param {number} per_page
  * @return {Promise<ApiResponseList>}
  */
-async function getPage(endpoint, page = 1, per_page = 10) {
-    return await api.get(endpoint, {per_page, page})
+async function getPage(endpoint, options, page = 1, per_page = 10) {
+    options['per_page'] = per_page;
+    options['page'] = page;
+    return await api.get(endpoint, options)
 }
 
 /**
  * Runs a GET request on an endpoint supporting multiple pages.
  * @param {string} endpoint
+ * @param {Object} options
  * @return {Promise<Object[]>}
  */
-export async function multiGet(endpoint) {
+export async function multiGet(endpoint, options = {}) {
     const list = [];
     /** @type {ApiResponseList} */
     let result;
     let page = 1;
     do {
-         result = await getPage(endpoint, page++);
+         result = await getPage(endpoint, options, page++);
          for (const item of result.data) list.push(item);
     } while (parseInt(result.headers['w-wp-totalpages']) > page)
     return list;
