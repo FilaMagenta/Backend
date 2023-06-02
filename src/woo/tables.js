@@ -43,6 +43,7 @@ export async function createTable(event, userData) {
     if (tables.includes(tableName)) {
         return null;
     }
+    tables.push(tableName);
 
     const newAttributes = event.attributes;
     newAttributes.push(
@@ -51,7 +52,7 @@ export async function createTable(event, userData) {
             visible: true,
             position: 1,
             variation: true,
-            options: [tableName]
+            options: tables
         }
     )
     console.log('Updating event attributes:', newAttributes);
