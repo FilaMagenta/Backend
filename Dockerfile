@@ -1,7 +1,10 @@
-FROM node:18-alpine
+FROM alpine
 
 # Create app directory
 WORKDIR /usr/src/app
+
+# Install NodeJS and npm
+RUN apk add --update nodejs npm
 
 # Install app dependencies
 # A wildcard is used to ensure both package.json AND package-lock.json are copied
