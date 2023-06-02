@@ -1,6 +1,7 @@
 
 import express from 'express';
 import cors from 'cors';
+import rateLimit from 'express-rate-limit'
 
 import loginEndpoint from './endpoints/login.mjs';
 import registerEndpoint from './endpoints/register.mjs';
@@ -19,6 +20,14 @@ export function start(port = 3000) {
 
     app.use(express.json());
     app.use(cors());
+    app.use(
+        rateLimit({
+            windowMs: 15 * 60 * 1000, // 15 minutes
+            max: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+            standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+            legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+        })
+    );
 
     app.get('/v1', (req, res) => sendSuccess(res));
     app.post('/v1', (req, res) => sendSuccess(res));
