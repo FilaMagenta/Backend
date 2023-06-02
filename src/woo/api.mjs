@@ -41,7 +41,18 @@ export default api;
  * @return {Promise<ApiResponse>}
  */
 export async function get(endpoint, params = {}) {
-    return await api.get(endpoint, params)
+    let attempts = 0;
+    while (attempts < 5) {
+        try {
+            return await api.get(endpoint, params)
+        } catch (err) {
+            if (err?.code === 'ECONNRESET') {
+                // Ignore ECONNRESET errors
+            } else
+                throw err;
+        }
+        attempts++;
+    }
 }
 
 /**
@@ -52,7 +63,40 @@ export async function get(endpoint, params = {}) {
  * @return {Promise<ApiResponse>}
  */
 export async function post(endpoint, data = {}, params = {}) {
-    return await api.post(endpoint, data, params)
+    let attempts = 0;
+    while (attempts < 5) {
+        try {
+            return await api.post(endpoint, data, params)
+        } catch (err) {
+            if (err?.code === 'ECONNRESET') {
+                // Ignore ECONNRESET errors
+            } else
+                throw err;
+        }
+        attempts++;
+    }
+}
+
+/**
+ * Performs a PUT request on the Woo API.
+ * @param {string} endpoint
+ * @param {Object} data
+ * @param {Object} params
+ * @return {Promise<ApiResponse>}
+ */
+export async function put(endpoint, data = {}, params = {}) {
+    let attempts = 0;
+    while (attempts < 5) {
+        try {
+            return await api.put(endpoint, data, params)
+        } catch (err) {
+            if (err?.code === 'ECONNRESET') {
+                // Ignore ECONNRESET errors
+            } else
+                throw err;
+        }
+        attempts++;
+    }
 }
 
 /**
@@ -66,7 +110,7 @@ export async function post(endpoint, data = {}, params = {}) {
 async function getPage(endpoint, options, page = 1, per_page = 10) {
     options['per_page'] = per_page;
     options['page'] = page;
-    return await api.get(endpoint, options)
+    return await get(endpoint, options)
 }
 
 /**
@@ -116,7 +160,7 @@ export async function initApi() {
         // If it doesn't exist, create
         console.info(`  Creating attribute #${attribute.name}...`);
         const result = await newAttribute(attribute);
-        console.info(`  Create result:`, result);
+        console.info(`  Create result (${result.status}):`, result.statusText);
     }
     console.info('  All attributes ready!');
 }

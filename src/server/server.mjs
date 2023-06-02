@@ -8,7 +8,7 @@ import {getAccountEndpoint, setAccountMetaEndpoint, getAccountMetaEndpoint} from
 import {MetaTypes} from '../woo/data.mjs';
 import {sendError, sendSuccess} from "./utils.mjs";
 import {UNKNOWN_ENDPOINT} from "../errors.mjs";
-import {eventsEndpoint, newEventEndpoint} from "./endpoints/events.mjs";
+import {createTableEndpoint, eventsEndpoint, newEventEndpoint} from "./endpoints/events.mjs";
 
 /**
  * Starts the webserver on the given port.
@@ -42,6 +42,7 @@ export function start(port = 3000) {
 
     app.get('/v1/events', eventsEndpoint);
     app.post('/v1/events/new', newEventEndpoint);
+    app.post('/v1/events/:id/table', createTableEndpoint);
 
     app.get('*', (req, res) => {
         sendError(res, UNKNOWN_ENDPOINT, 404);

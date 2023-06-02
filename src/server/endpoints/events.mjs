@@ -1,7 +1,8 @@
 import {authenticate, sendError, sendSuccess} from "../utils.mjs";
-import {getEvents, newEvent} from "../../woo/events.js";
-import {isAdmin} from "../../woo/data.mjs";
-import errors, {AUTH_FORBIDDEN, UNKNOWN_EVENT_NEW} from "../../errors.mjs";
+import {getEvent, getEvents, newEvent} from "../../woo/events.js";
+import {getUserData, isAdmin} from "../../woo/data.mjs";
+import errors, {AUTH_FORBIDDEN, EVENT_NOT_FOUND, TABLE_ALREADY_EXISTS, UNKNOWN_EVENT_NEW} from "../../errors.mjs";
+import {createTable} from "../../woo/tables.js";
 
 /**
  * Provides the logic of the events' endpoint.
@@ -59,3 +60,26 @@ export async function newEventEndpoint (req, res) {
 }
 
 // TODO: Event visibility change endpoint
+
+/**
+ * Provides the logic of the table creation endpoint.
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ */
+export async function createTableEndpoint(req, res) {
+    return authenticate(req, res, async (dni, userId) => {
+        const params = req.params;
+        /** @type {number} */ const eventId = params.id;
+
+        const event = await getEvent(eventId);
+        if (event == null) return sendError(res, EVENT_NOT_FOUND);
+
+        const userData = await getUserData(userId);
+        const newTable = await createTable(event, userData);
+
+        if (newTable == null)
+            sendError(res, TABLE_ALREADY_EXISTS);
+        else
+            sendSuccess(res);
+    });
+}

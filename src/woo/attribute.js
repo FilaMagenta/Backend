@@ -13,7 +13,7 @@
  * @property {string} _links.collection.href
  */
 
-import {get, post} from "./api.mjs";
+import {get, multiGet, post} from "./api.mjs";
 
 /**
  * Caches the ID of each attribute according to their name.
@@ -46,22 +46,26 @@ class Attribute {
      * @return {Promise<number|null>} The id of the category, may be null if the category doesn't exist.
      */
     async getId() {
+        console.log('Getting id of', this.name);
         const id = AttributeIdsCache.get(this.name);
         if (id != null) return id;
-        const category = await getAttribute(this);
-        if (category == null) return null;
-        AttributeIdsCache.set(this.name, category.id);
-        return category.id;
+        console.log('Fetching', this.name, 'attribute from server...');
+        const value = await getAttribute(this);
+        console.log('Get attribute:', value);
+        if (value == null) return null;
+        AttributeIdsCache.set(this.name, value.id);
+        return value.id;
     }
 }
 
 export const ATTRIBUTE_SECTION = new Attribute('section');
+export const ATTRIBUTE_TABLE = new Attribute('table');
 
 /**
  * All the attributes required by the backend.
  * @type {Attribute[]}
  */
-export const Attributes = [ATTRIBUTE_SECTION];
+export const Attributes = [ATTRIBUTE_SECTION, ATTRIBUTE_TABLE];
 
 /**
  * Fetches a list of all the attributes available in the server.
@@ -73,16 +77,18 @@ export async function getAttributes() {
 }
 
 /**
- * Fetches a attribute from the server.
+ * Fetches an attribute from the server.
  * @param {Attribute} attribute
  * @return {Promise<?WooAttribute>}
  */
 export async function getAttribute(attribute) {
-    const result = await get('products/attributes', {slug: attribute.name, per_page: 1});
     /** @type {WooAttribute[]} */
-    const list = result.data;
+    const list = await multiGet('products/attributes');
+    console.log('getAttribute:', list);
+    console.log('length:', list.length);
     if (list.length <= 0) return null;
-    return list[0];
+    console.log('Finding with name ===', attribute.name);
+    return list.find(item => item.name === attribute.name);
 }
 
 /**

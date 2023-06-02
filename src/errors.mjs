@@ -28,8 +28,10 @@ export const INVALID_DNI = new Error(20, 'The DNI passed is not valid.');
 
 export const USER_ALREADY_EXISTS = new Error(30, 'An user with the given DNI already exists.');
 export const EMAIL_ALREADY_EXISTS = new Error(31, 'An user with the given email already exists.');
+export const TABLE_ALREADY_EXISTS = new Error(32, 'A table for the requesting user already exists.');
 
 export const USER_NOT_FOUND = new Error(40, 'Could not find any user with the given DNI');
+export const EVENT_NOT_FOUND = new Error(41, 'Could not find any event with the given ID');
 
 export const AUTH_MISSING_HEADER = new Error(50, 'The request is missing an authentication header.');
 export const AUTH_INVALID_METHOD = new Error(51, 'Using a non-supported authentication method.');

@@ -88,7 +88,7 @@
 
 import {get, post} from "./api.mjs";
 import {CATEGORY_EVENTS} from "./category.js";
-import {ATTRIBUTE_SECTION} from "./attribute.js";
+import {ATTRIBUTE_SECTION, ATTRIBUTE_TABLE} from "./attribute.js";
 
 /**
  * Fetches all the events available in the server.
@@ -98,6 +98,21 @@ export async function getEvents() {
     const eventsCategory = await CATEGORY_EVENTS.getId();
     const result = await get('products', {category: eventsCategory})
     return result.data;
+}
+
+/**
+ * Fetches an event from its ID.
+ * @param {number} id
+ * @return {Promise<?Event>}
+ */
+export async function getEvent(id) {
+    const eventsCategory = await CATEGORY_EVENTS.getId();
+    try {
+        const result = await get(`products/${id}`, {category: eventsCategory});
+        return result.data;
+    } catch (err) {
+        return null;
+    }
 }
 
 /**
@@ -129,7 +144,8 @@ export async function newEvent(
     externalLimit
 ) {
     const isFree = prices == null || prices.length <= 0;
-    const attribute = await ATTRIBUTE_SECTION.getWooAttribute();
+    const sectionAttribute = await ATTRIBUTE_SECTION.getWooAttribute();
+    const tableAttribute = await ATTRIBUTE_TABLE.getWooAttribute();
 
     // Create product
     const product = {
@@ -140,6 +156,15 @@ export async function newEvent(
         stock_quantity: stock,
         categories: [
             { id: await CATEGORY_EVENTS.getId() }
+        ],
+        attributes: [
+            {
+                id: tableAttribute.id,
+                visible: true,
+                position: 1,
+                variation: true,
+                options: ['new']
+            }
         ],
         virtual: true,
         shipping_required: false,
@@ -152,19 +177,27 @@ export async function newEvent(
         ]
     };
     if (isFree) product.regular_price = '0.0';
-    else product.attributes = [
+    else product.attributes.push(
         {
-            id: attribute.id,
+            id: sectionAttribute.id,
             visible: true,
             position: 0,
             variation: true,
             options: prices.map((price) => price.section)
         }
-    ];
+    );
     console.log('Creating product:', product);
     const createResult = await post('products', product);
     if (createResult.status < 200 || createResult.status >= 300) return null;
     const productId = createResult.data.id;
+
+    // Add default (create new) table variation
+    const newTableVariation = {
+        attributes: [
+            { id: tableAttribute.id, option: 'new' }
+        ],
+    }
+    await post(`products/${productId}/variations`, newTableVariation);
 
     // Set price if any
     if (!isFree) {
@@ -178,7 +211,7 @@ export async function newEvent(
                 // purchasable: true,
                 // virtual: true,
                 attributes: [
-                    { id: attribute.id, option: price.section }
+                    { id: sectionAttribute.id, option: price.section }
                 ],
                 // sku: `${productId}-section-${price.section}`
             }
